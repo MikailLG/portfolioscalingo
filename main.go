@@ -11,10 +11,7 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Erreur lors du chargement du fichier .env")
-	}
+	_ = godotenv.Load()
 	port := os.Getenv("PORT")
 	host := os.Getenv("HOST")
 	log.Printf("Démarrage sur %s:%s", host, port)
