@@ -1,8 +1,23 @@
-FROM golang:1.21-alpine
+FROM golang:1.22-alpine AS builder
+
 WORKDIR /app
-COPY go.mod ./
+
+COPY go.mod go.sum ./
 RUN go mod download
+
 COPY . .
-RUN go build -o main .
-EXPOSE 8080
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o main main.go
+
+FROM alpine:latest
+
+WORKDIR /app
+
+COPY --from=builder /app/main .
+
+COPY --from=builder /app/src/static ./src/static
+COPY --from=builder /app/src/temp ./src/temp
+
+EXPOSE 8888
+
 CMD ["./main"]
